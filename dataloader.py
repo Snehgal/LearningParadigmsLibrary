@@ -10,10 +10,10 @@ import torch.optim as optim
 import matplotlib.pyplot as plt
 import numpy as np
 
-def Fashion(mean=0.5,median=0.5,batchSize=4):
+def Fashion(mean=0.5,variance=0.5,batchSize=4):
   transform = transforms.Compose(
     [transforms.ToTensor(),
-    transforms.Normalize((mean,),(median,))]
+    transforms.Normalize((mean,),(variance,))]
   )
   training_set = torchvision.datasets.FashionMNIST("data",download=True,transform=transform,train=True)
   test_set = torchvision.datasets.FashionMNIST("data",download=True,transform=transform,train=False)
@@ -21,7 +21,7 @@ def Fashion(mean=0.5,median=0.5,batchSize=4):
   trainLoader = DataLoader(training_set,batch_size = batchSize,shuffle=True)
   testLoader = DataLoader(test_set,batch_size=batchSize,shuffle=False)
 
-  infoFasion(trainLoader,testLoader)
+  infoFashion(trainLoader,testLoader)
   return trainLoader,testLoader
 
 def Speech(batchSize=4):
@@ -37,7 +37,7 @@ def Speech(batchSize=4):
 
 import matplotlib.pyplot as plt
 
-def infoFasion(trainLoader, testLoader):
+def infoFashion(trainLoader, testLoader):
     print(f"Total Training Batches: {len(trainLoader)}")
     print(f"Total Testing Batches: {len(testLoader)}")
 
