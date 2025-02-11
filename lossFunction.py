@@ -10,20 +10,20 @@ import numpy as np
 
 #classical loss functions
 def MSE():
-  loss = nn.MSELoss()
-  return loss
+  criterion = nn.MSELoss()
+  return criterion
 
 def CrossEntropyLoss():
-  loss = nn.CrossEntropyLoss()
-  return loss
+  criterion = nn.CrossEntropyLoss()
+  return criterion
 
 def BCELoss():
-  loss = nn.BCELoss()
-  return loss
+  criterion = nn.BCELoss()
+  return criterion
 
-def TripletMarginLoss():
-  loss = nn.TripletMarginLoss()
-  return loss
+def TripletMarginLoss(margin=1.0):
+  criterion = nn.TripletMarginLoss(margin = margin)
+  return criterion
 
 #trainable loss functions
 #GPT helped because I didnt understand a lot
