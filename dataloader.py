@@ -22,7 +22,11 @@ def Fashion(mean=0.5,variance=0.5,batchSize=4):
   testLoader = DataLoader(test_set,batch_size=batchSize,shuffle=False)
 
   infoFashion(trainLoader,testLoader)
-  return trainLoader,testLoader
+  fashionClasses = [
+    "T-shirt/top", "Trouser", "Pullover", "Dress", "Coat",
+    "Sandal", "Shirt", "Sneaker", "Bag", "Ankle boot"
+  ]
+  return trainLoader,testLoader,fashionClasses
 
 def Speech(batchSize=4):
   training_set = torchaudio.datasets.SPEECHCOMMANDS("data",download=True,subset='training')
