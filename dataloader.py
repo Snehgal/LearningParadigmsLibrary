@@ -31,28 +31,21 @@ def Speech(batchSize=4):
   trainLoader = DataLoader(training_set,batch_size=batchSize,shuffle=True)
   testLoader = DataLoader(test_set,batch_size=batchSize,shuffle=False)
 
-  infoSpeech(trainLoader,testLoader)
+  print("DoneSpeech")
+  #infoSpeech(trainLoader,testLoader)
   return trainLoader,testLoader
 
-def show_images(images, labels):
-    fig, axes = plt.subplots(1, len(images), figsize=(10, 3))
-    for img, label, ax in zip(images, labels, axes):
-        ax.imshow(img.squeeze(), cmap="gray")
-        ax.set_title(f"Label: {label}")
-        ax.axis("off")
-    plt.show()
+import matplotlib.pyplot as plt
 
-def infoFasion(trainLoader,testLoader):
-  #using GPT
-  print(f"Total Training Batches: {len(trainLoader)}")
-  print(f"Total Testing Batches: {len(testLoader)}")
+def infoFasion(trainLoader, testLoader):
+    print(f"Total Training Batches: {len(trainLoader)}")
+    print(f"Total Testing Batches: {len(testLoader)}")
 
-  # Fetch a batch of data
-  data_iter = iter(trainLoader)
-  images, labels = next(data_iter)
+    # Fetch a batch of data
+    data_iter = iter(trainLoader)
+    images, labels = next(data_iter)
 
-  print(f"Batch Size: {images.shape}")  # Shape: (batch_size, 1, 28, 28)
-  show_images(images[:5], labels[:5])
+    print(f"Batch Size: {images.shape}")  # Expected (batch_size, 1, 28, 28)
 
 def infoSpeech(speechTrainLoader,speechTestLoader):
   # Print SpeechCommands dataset info
