@@ -42,9 +42,9 @@ class TrainableTripleLoss(nn.Module):
 class LearnedLoss(nn.Module):
   def __init__(self):
     super(LearnedLoss,self).__init__()
-    self.dense = nn.Linear(2,1)
+    self.fc = nn.Linear(2,1)
 
   def forward(self, pred, target):
         error = torch.abs(pred - target)
-        loss = self.fc(torch.stack([pred, error], dim=1))
+        loss = self.fc(torch.cat([pred, error], dim=1))
         return loss.mean()

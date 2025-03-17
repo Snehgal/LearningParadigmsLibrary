@@ -77,8 +77,9 @@ class ResNet(nn.Module):
         self.layer4 = self.makeLayer(block,512,layers[3],stride=2) # outChannels = 512
 
         self.avgpool = nn.AdaptiveAvgPool1d(1)
-        self.fc = nn.Linear(512*block.expansion,numClasses)
 
+        #to make this an embedding model, simply change num classes to be equal to embedding dimension
+        self.fc = nn.Linear(512*block.expansion,numClasses)
         self.initialiseWeights()
 
     def makeLayer(self, block, outChannels, numBlocks, stride=1):
@@ -101,15 +102,13 @@ class ResNet(nn.Module):
 
 
     def initialiseWeights(self):
-        
         for m in self.modules():
             if isinstance(m, nn.Conv1d):
                 nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
             elif isinstance(m, nn.BatchNorm1d):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
-        
-
+                
     def forward(self,x):
         x = self.conv1(x)
         x = self.layer1(x)
@@ -134,6 +133,18 @@ def ResNet50(numClasses,inChannels):
 
 def ResNet101(numClasses,inChannels):
     return ResNet(BottleneckBlock,[3,4,23,3],inChannels,numClasses)
+
+def ResNet18Embedding(embeddingDim = 512,inChannels = 1):
+    return ResNet(BasicBlock,[2,2,2,2],inChannels,embeddingDim)
+
+def ResNet34Embedding(embeddingDim = 512,inChannels = 1):
+    return ResNet(BasicBlock,[3,4,6,3],inChannels,embeddingDim)
+    
+def ResNet50(embeddingDim = 512,inChannels = 1):
+    return ResNet(BottleneckBlock,[3,4,6,3],inChannels,embeddingDim)
+
+def ResNet101(embeddingDim = 512,inChannels = 1):
+    return ResNet(BottleneckBlock,[3,4,23,3],inChannels,embeddingDim)
 
 
 

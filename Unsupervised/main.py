@@ -1,4 +1,3 @@
-import dataloader as dl
 import torch
 import torchvision
 import torchvision.transforms as transforms
@@ -9,25 +8,77 @@ import torch.optim as optim
 import matplotlib.pyplot as plt
 import numpy as np
 
-'''
-loading FashionMNIST and printing 4 images
-'''
-def imshow(img,mean=0.5,variance=0.5):
-    img = img*variance + mean     # unnormalize
-    npimg = img.numpy()
-    plt.imshow(np.transpose(npimg, (1, 2, 0)))
-    plt.show()
+import dataloader as dl
+import lossFunction as lf
+import model as m
+import optimizer as opt
+
+# Select device (GPU if available, otherwise CPU)
+device = "cpu"
+print("Starting...")
+# Define dataset path and speech commands classes
+rootDir = "./data/SpeechCommands/speech_commands_v0.02"
+speechClasses = ['backward', 'bed', 'bird', 'cat', 'dog', 'down', 'eight', 'five', 'follow', 'forward',
+ 'four', 'go', 'happy', 'house', 'learn', 'left', 'marvin', 'nine', 'no', 'off', 'on',
+ 'one', 'right', 'seven', 'sheila', 'six', 'stop', 'three', 'tree', 'two', 'up', 'visual',
+ 'wow', 'yes', 'zero']
+
+# Load dataset
+dataset = dl.TripletLoader(rootDir, transform=None, triplet=True)
+print("Data")
+
+# Define loss function
+lossFn = lf.TripletLoss(margin=0.2)
+print("LossFn")
+
+# Initialize model and move to device
+model = m.ResNet18(numClasses=len(speechClasses), inChannels=1).to(device)
+# model = m.ResNet50(numClasses=len(speechClasses), inChannels=1).to(device)
+# model = m.ResNet101(numClasses=len(speechClasses), inChannels=1).to(device)
+print("Model")
+
+# Define optimizer and scheduler
+optimizer = opt.AdamW(model)
+scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=50, eta_min=0.001)
+print("OptSched")
+
+# Training settings
 batchSize = 4
-fashionTrain,fashionTest,fashionClasses = dl.Fashion(batchSize=batchSize)
-#model=model.fashionModel1()
+numEpochs = 5
+trainLoader = DataLoader(dataset, batch_size=batchSize, shuffle=True)
+print("Loader")
 
-# runs in collab directly only
-dataiter = iter(fashionTrain)
-images, labels = next(dataiter)
-imshow(torchvision.utils.make_grid(images))
-print(' '.join(f'{fashionClasses[labels[j]]:5s}' for j in range(batchSize)))
+# Training Loop
+for epoch in range(numEpochs):
+    print(epoch)
+    model.train()  # Set model to training mode
+    epochLoss = 0.0
 
-'''
-loading SpeechAudio
-'''
-#speechTrain,speechTest = dl.Speech()
+    for batch in trainLoader:
+        anchor = batch['anchor'].to(device)
+        positive = batch['positive'].to(device)
+        negative = batch['negative'].to(device)
+
+        # Forward pass
+        anchorOut = model(anchor)
+        positiveOut = model(positive)
+        negativeOut = model(negative)
+
+        # Compute loss
+        lossValue = lossFn(anchorOut, positiveOut, negativeOut)
+
+        # Backward pass
+        optimizer.zero_grad()
+        lossValue.backward()
+        optimizer.step()
+
+        # Accumulate loss
+        epochLoss += lossValue.item()
+
+    # Step scheduler
+    scheduler.step()
+
+    # Print epoch loss
+    print(f"Epoch [{epoch+1}/{numEpochs}], Loss: {epochLoss/len(trainLoader):.4f}, LR: {scheduler.get_last_lr()[0]:.6f}")
+
+print("Training Completed.")
