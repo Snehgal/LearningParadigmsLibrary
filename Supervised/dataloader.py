@@ -10,13 +10,13 @@ import torch.optim as optim
 import matplotlib.pyplot as plt
 import numpy as np
 
-def Fashion(mean=0.5,variance=0.5,batchSize=4):
+def Fashion(mean=0.5,variance=0.5,batchSize=4,download = False):
     transform = transforms.Compose(
     [transforms.ToTensor(),
     transforms.Normalize((mean,),(variance,))]
     )
-    training_set = torchvision.datasets.FashionMNIST("data",download=False,transform=transform,train=True)
-    test_set = torchvision.datasets.FashionMNIST("data",download=False,transform=transform,train=False)
+    training_set = torchvision.datasets.FashionMNIST("data",download=download,transform=transform,train=True)
+    test_set = torchvision.datasets.FashionMNIST("data",download=download,transform=transform,train=False)
     
     trainLoader = DataLoader(training_set,batch_size = batchSize,shuffle=True)
     testLoader = DataLoader(test_set,batch_size=batchSize,shuffle=False)
@@ -28,9 +28,9 @@ def Fashion(mean=0.5,variance=0.5,batchSize=4):
     ]
     return trainLoader,testLoader,fashionClasses
 
-def Speech(batchSize=4):
-    training_set = torchaudio.datasets.SPEECHCOMMANDS("data",download=False,subset='training')
-    test_set = torchaudio.datasets.SPEECHCOMMANDS("data",download=False,subset='testing')
+def Speech(batchSize=4,download = False):
+    training_set = torchaudio.datasets.SPEECHCOMMANDS("data",download=download,subset='training')
+    test_set = torchaudio.datasets.SPEECHCOMMANDS("data",download=download,subset='testing')
     
     trainLoader = DataLoader(training_set,batch_size=batchSize,shuffle=True)
     testLoader = DataLoader(test_set,batch_size=batchSize,shuffle=False)
