@@ -1,4 +1,4 @@
-# TrainingParadigms Library
+# DeepLearningParadigms Library
 
 A comprehensive PyTorch-based library for implementing both **Supervised** and **Unsupervised** learning paradigms. This library provides modular components for building, training, and evaluating neural networks with support for various datasets, model architectures, loss functions, and optimization techniques.
 
